@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.28.0
+    container_name: geoserver
+    ports:
+      - "8080:8080"
+
+    environment:
+      # GeoServer admin credentials
+      GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN_USER}
+      GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_ADMIN_PASSWORD}
+
+      # Install extensions on startup
+      INSTALL_EXTENSIONS: "true"
+
+      # Stable extensions list (official names from GeoServer docs)
+      STABLE_EXTENSIONS: >
+        control-flow,
+        csw,
+        csw-iso,
+        gdal,
+        inspire,
+        libjpeg-turbo,
+        monitor,
+        pyramid,
+        vectortiles,
+        wps
+
+      # Optional: skip demo layers
+      SKIP_DEMO_DATA: "true"
+
+    volumes:
+      # Your requested folders
+      - ./geoserver/data_dir:/opt/geoserver/data_dir
+      - ./geoserver/gwc:/opt/geoserver/geowebcache
+      - ./geoserver/settings:/settings
+      - ./geoserver/additional_libs:/opt/additional_libs:Z
+      - ./geoserver/satellite_imagery:/media
+
+    restart: unless-stopped
